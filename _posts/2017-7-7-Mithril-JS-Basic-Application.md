@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Getting a basic webb application up and running
+title: Basic mithril web application 
 ---
 
 ### This tutorial covers what goes into a basic web application covering all aspects of it.
