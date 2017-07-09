@@ -11,7 +11,7 @@ title: Basic Mithril.js web application
 - Server side environment - (Hapi.js - one of the multiple web servers running on Node.js)
 - Basic parts of a modern, responsive web application
 
-This tutorial will get us up and running with an SPA (single page application) that uses Mithril.js to render HTML in the browser. I am using Mithril.js because it is very fast (currently do not know of anything faster), light-weight, quick and easy to get started with, well documented and very well thought out.
+This tutorial will get us up and running with an SPA (single page application) that uses Mithril.js to render HTML in the browser. I am using [Mithril.js](https://mithril.js.org) because it is very fast (currently do not know of anything faster), light-weight, quick and easy to get started with, well documented and very well thought out.
 
 This tutorial is a starting point. In upcoming installments I will expand on the app and show how to make the website absolutely SEO friendly (by utilizing SSR (server side rendering)) and even faster (using pre-rendered files). It will score 100% in Google PageSpeed, a pass in the Mobile-Friendly test and Excellent in Mobile Speed test. Such scores are not difficult to achive but most sites still fail to achieve them (at least what google PageSpeed is concerned). Mostly, I think, this is because of the currently prevailing CMS systems. If I continue long enough with my tutorials I will be adding CMS functionality to the website - without affecting these scores (that is the aim at least).
 
@@ -99,23 +99,11 @@ Here we are first requiring the Mithril framework. Then we use the render method
 
 Now, let's build our application with webpack.
 
-First add the following code to the package.json file
+First create a file called webpack.config.js and enter the following:
 
 ``` javascript
-  "scripts": {
-    "build": "webpack"
-  }
-```
-
-This allows us to build the application using a npm command
-
-Then create a file called webpack.config.js
-
-and enter the following:
-
 var path = require('path');
 
-``` javascript
 module.exports = {
   entry: './src/index.js',
   output: {
@@ -124,8 +112,19 @@ module.exports = {
   }
 };
 ```
-
 The code basically tells webpack to index.js as the entry file and output the result of the build process in a file called bundle.js (in a folder named "dist"). What webpack does as part of its build process is to look in the entry file and take all the javascript from there plus all the script imported from other files through the 'import' or 'require' method.  
+
+Then add the following code to the package.json file
+
+``` javascript
+  "scripts": {
+    "build": "webpack"
+  }
+```
+
+This allows us to build the application using the `run` npm command. Npm will look up our build command and execute its content which is "webpack". This will in turn cause Node.js to run the `webpac`k command. Webpack will look for a configuration file and find the one you just created - and then build according to its content.
+
+It might seem tedious to do it this way instead of using webpack directly from the command line. However, having a list with build scripts will come in handy as our app gets more complex and more complex build actions will be added. Also, we cannot run webpack straight from the command line without navigating to the folder where it is located. Using npm we are able to have a single command called `build` and npm will take care of finding and executing the webpack executable at the right location.
 
 With this in place we can now build our project using npm
 
@@ -133,16 +132,23 @@ With this in place we can now build our project using npm
 npm run build
 ```
 
-This should result in an output that lists the assets which have been built. In this case just our bundle.js file (appearing in the 'dist' folder)
+You should soon see some output that lists the assets which have just been built. In this case our bundle.js file (which you will also now find in the 'dist' folder)
 
-To see our website in action we can take advantage of a web-server running in the context of VS Code. To do this you need to install a web server extension. I am currently using this one: vscode-preview-server
-```
+To see our website in action we can take advantage of a web-server running in the context of VS Code. To do this you need to install a web server extension. I am currently using this one: vscode-preview-server. So, go ahead and install it unless you already have a dev server in place.
 
 With a web-server installed, you can now select index.html in VS Code and launch it in the default browser.
 
-At this point we have a full production environment and with our code under source control.
+At this point we have a rudimentary development infrastructure in place and our code under source control.
 
+### Time to bring some style into our website
 
+Let's add a CSS library to our enviromnet. Currently, I am testing [mini.css](http://minicss.org)
+
+To add it run
+
+```
+npm install mini.css --save-dev --save-exact 
+```
 
 
 This tutorial is being written as I am creating the application. So, if you happen to read it now I apologize for it not being finalized. You are reading a work in progress :-) 
