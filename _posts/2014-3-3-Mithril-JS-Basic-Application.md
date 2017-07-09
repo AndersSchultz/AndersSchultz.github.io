@@ -1,9 +1,13 @@
 ---
 layout: post
-title: You're up and running!
+title: Getting a basic webb application up and running
 ---
 
-Next you can update your site name, avatar and other options using the _config.yml file in the root of your repository (shown below).
+This tutorial covers what goes into a basic web application covering all aspects of it.
+
+- Source control (Git)
+- Build tools
+- Front end framework (Mithril.js)
 
 ![_config.yml]({{ site.baseurl }}/images/config.png)
 
