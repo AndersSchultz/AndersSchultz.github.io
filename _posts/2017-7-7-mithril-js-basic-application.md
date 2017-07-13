@@ -102,13 +102,13 @@ Now, let's build our application with webpack.
 First create a file called webpack.config.js and enter the following:
 
 ``` javascript
-var path = require('path');
+var path = require('path');// path module is used which helps us resolve paths properly especially across different operating systems
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/index.js',//The file that is the starting point of all processing
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist')
+    filename: 'bundle.js',//Name of the output file
+    path: path.resolve(__dirname, 'dist')//The directory into which the resulting files will be placed
   }
 };
 ```
@@ -138,21 +138,105 @@ To see our website in action we can take advantage of a web-server running in th
 
 With a web-server installed, you can now select index.html in VS Code and launch it in the default browser.
 
+Using webpacks own build server npm i --save-dev webpack-dev-servers
+- runs code from memory not from disc
+- changes will be processed on the fly by webpack and the browser page will reload automatically
+
 At this point we have a rudimentary development infrastructure in place and our code under source control.
 
 ### Time to bring some style into our website
 
 Let's add a CSS library to our enviromnet. Currently, I am testing [mini.css](http://minicss.org)
 
-To add it run
+To get it added to our project we can once agin rely on npm:
 
 ```
 npm install mini.css --save-dev --save-exact 
 ```
 
+Now, it can be imported it like any other module. Add this to your index.js file:
+
+```
+import 'mini.css/dist/mini-default.css'
+```
+
+Now webpack knows that it should require your css file and add them to your application.
+
+However, webpack does not handle CSS out of the box. If you bild your application now with webpack you will get an error message saying that it is not know how to process the css files. It kind of does not know what it is and what to do with it. 
+
+To make it wiser some configuration, some loaders and a plugin is necessary.
+
+Install the following three modules:
+
+```
+npm install --save-dev --save-exact css-loader style-loader extract-text-webpack-plugin
+```
+
+The first module `css-loader` handles assets in your CSS (referenced by `@import` and `url()`) and makes them available for further processing.  
+
+The second module `style-loader` adds the CSS to the DOM by injecting a `<style>` tag in the header.  
+
+So, With these loaders webpack is able to take styles referenced by the `import` command and add it to the JavaScript bundle. When running our application, the styles will be inserted into the web page in the header section inside a `<style>` tag.
+
+Though, as we have a rather substatial style sheet (even though mini.css is a small library, it still holds a lot of styling in it) I prefer to have the styles seperated out into a separate file instead of being added into the Javascript file and inserted into the DOM at runtime. The seperate file can be referenced as a regular `<link rel="stylesheet">` tag in the header. This seems like a more clearn approach and has the added benefit of allowing the browser to load the styles in parallel with the JavaScript bundle. Consequently, with a lot of styles the website will load faster. Later we will also make good use of this approach when we will optimize the loading speed of the website further by having the majority of the styles loaded after the intial load of the website (to be done in an upcoming tutorial).
+
+The third module `extract-text-webpack-plugin` on the list enables webpack to take the styles and place them into a separate file.
+
+To instruct webpack to use the modules we must change our configuration file so it now looks like this:
+
+``` javascript
+const ExtractTextPlugin = require("extract-text-webpack-plugin");//The plugin is `required` into a variable 
+
+var path = require('path');
+
+module.exports = {
+  entry: './src/index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  },   
+  module: {
+    rules: [
+      {
+        test: /\.css$/,//This is a regular expression that matches all files ending in `.css`
+        use: ExtractTextPlugin.extract({//Here the ExtractTextPlugin is used by calling its `extract` method. It takes the result of the css-loader and extracts it into a file.
+          fallback: "style-loader"//style-loader is used as a fallback (if ExtractTextPlugin is disabled)
+          use: "css-loader"//css-loader is assigned as being responsible for processing the CSS files
+        })
+      }
+    ]
+  },
+  plugins: [
+    new ExtractTextPlugin("styles.css"),//The plugin is initialized with a file name to use when extracting.
+  ]
+};
+```
+
+The new parts of the configuration is explained with comments above. The reason for the fallback assignment is so that the style loader can be used instead of the ExtractTextPlugin. By having this in place we could disable the ExtrctTextPlugin (fx. during development mode) and have styles added to the <header> tag.
+
+## Getting into Mithril.js ##
+
+So far we have just used Mithril.js to render a bit of text to a page. Just so we had something to bundle and build. Now it's time to create the basic infrastrcture for our application.
+
+
+
+
 
 This tutorial is being written as I am creating the application. So, if you happen to read it now I apologize for it not being finalized. You are reading a work in progress :-) 
 
+notes regarding upcoming things:
+
+Adding image support:
+
+```
+npm install --save-dev file-loader
+```
++       {
++         test: /\.(png|svg|jpg|gif)$/,
++         use: [
++           'file-loader'
++         ]
++       }
 
 Other npm modules we will need:
 
